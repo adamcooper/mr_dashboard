@@ -1,6 +1,8 @@
 class Preso < Sinatra::Base
-  
-  set :public_folder, Proc.new { File.join(root, "static") }
+
+  set :public_folder, Proc.new { File.join(root, "public") }
+  set :layout, :layout
+
   enable :sessionsend
 
   use Rack::Session::Cookie
@@ -15,12 +17,20 @@ class Preso < Sinatra::Base
   end
 
   get '/' do
-    haml :home
+    haml :root
   end
 
   get '/logout' do
     session['uid'] = nil
     redirect "/"
+  end
+
+  get "/application.js" do
+    coffee :application
+  end
+
+  get "/application.css" do
+    scss :application
   end
 
   post '/auth/developer/callback' do

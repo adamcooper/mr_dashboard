@@ -1,0 +1,27 @@
+!!! 5
+%html(lang="en")
+  %head
+    %title Partnerpedia Metrics
+    %script{:src => '/lib/jquery-1.7.min.js'}
+    %script{:src => '/lib/bootstrap/js/bootstrap-dropdown.js'}
+    %script{:src => '/lib/bootstrap/js/bootstrap-alerts.js'}
+    %script{:src => 'application.js'}
+    %link{:href => 'lib/bootstrap/bootstrap.min.css', :rel => 'stylesheet', :type => "text/css"}
+    %link{:href => 'application.css', :rel => 'stylesheet', :type => "text/css"}
+
+  %body
+    .topbar
+      .fill
+        .container
+          %a{:class => "brand", :href => ""}Partnerpedia
+          %ul(class="nav")
+            %li(class="active")
+              %a(href = "/") Home
+            %li
+              %a(href = "#" id = 'pause') Pause
+            %li
+              %a(href = "#" id = 'play' style = 'display: none;') Play
+
+    .container-fluid
+      = yield
+
