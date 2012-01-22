@@ -1,3 +1,3 @@
-#web: bundle exec ruby web.rb -p $PORT
-dev: bundle exec shotgun --server=thin --port=$PORT config.ru
+web: bundle exec thin start -p $PORT -e $RACK_ENV
+#dev: bundle exec shotgun --server=thin --port=$PORT config.ru
 
