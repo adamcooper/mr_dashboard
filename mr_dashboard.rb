@@ -18,7 +18,7 @@ module MrDashboard
 
   def self.belongs_to_github_organization(user)
     org = MrDashboard.settings['github_org']
-    return true if org.nil? || org.blank?
+    return true if org.nil? || org == ""
 
     begin
       RestClient.log = STDOUT
