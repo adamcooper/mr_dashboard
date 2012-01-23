@@ -1,7 +1,7 @@
 !!! 5
 %html(lang="en")
   %head
-    %title Partnerpedia Metrics
+    %title Mr. Dashboard
     %script{:src => '/lib/jquery-1.7.min.js'}
     %script{:src => '/lib/bootstrap/js/bootstrap-dropdown.js'}
     %script{:src => '/lib/bootstrap/js/bootstrap-alerts.js'}
@@ -14,12 +14,17 @@
       .fill
         .container
           %h3
-            %a(href="#") Partnerpedia
-          %ul(class="nav secondary-nav")
-            %li
-              %a(href = "#" id = 'pause') Pause
-            %li
-              %a(href = "#" id = 'play' style = 'display: none;') Play
+            %a(href="#") Mr. Dashboard
+          %ul(class="nav secondary-nav" data-dropdown="dropdown")
+            %li.dropdown
+              %a(href='#' class='dropdown-toggle')Commands
+              %ul.dropdown-menu
+                %li
+                  %a(href="#" id = 'speed') Set Speed
+                %li
+                  %a(href = "#" id = 'pause') Pause
+                %li
+                  %a(href = "#" id = 'play' style = 'display: none;') Play
             %li
               %a(href = "/logout") Logout
 

@@ -102,6 +102,11 @@ $ ->
     play_btn.show()
     rotator.pause()
 
+  $('#speed').click ->
+    speed = parseInt(prompt('Please enter the new speed in secods:')) * 1000
+    if speed
+      page.duration = speed for page in queue.items
+
   # debugging exports
   root.page = Page
   root.rotator = rotator
