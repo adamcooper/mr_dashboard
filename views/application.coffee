@@ -81,33 +81,35 @@ class Rotator
 pages =['http://www.partnerpedia.com', 'https://marketplace.cisco.com'];
 
 $ ->
-  # setting up rotator and pages
-  queue = new Queue()
-  queue.add(Page.build(url)) for url in pages
-  rotator = new Rotator($('#frame_container'), queue)
-  rotator.perform()
+  $.getJSON '/settings.js', (data)->
+
+    # setting up rotator and pages
+    queue = new Queue()
+    queue.add(Page.build(url)) for url in data['sites']
+    rotator = new Rotator($('#frame_container'), queue)
+    rotator.perform()
 
 
-  # bind handlers
-  play_btn = $('#play')
-  pause_btn = $('#pause')
+    # bind handlers
+    play_btn = $('#play')
+    pause_btn = $('#pause')
 
-  play_btn.click ->
-    pause_btn.show()
-    play_btn.hide()
-    rotator.play()
+    play_btn.click ->
+      pause_btn.show()
+      play_btn.hide()
+      rotator.play()
 
-  pause_btn.click ->
-    pause_btn.hide()
-    play_btn.show()
-    rotator.pause()
+    pause_btn.click ->
+      pause_btn.hide()
+      play_btn.show()
+      rotator.pause()
 
-  $('#speed').click ->
-    speed = parseInt(prompt('Please enter the new speed in secods:')) * 1000
-    if speed
-      page.duration = speed for page in queue.items
+    $('#speed').click ->
+      speed = parseInt(prompt('Please enter the new speed in secods:')) * 1000
+      if speed
+        page.duration = speed for page in queue.items
 
-  # debugging exports
-  root.page = Page
-  root.rotator = rotator
-  root.queue = queue
+    # debugging exports
+    root.page = Page
+    root.rotator = rotator
+    root.queue = queue

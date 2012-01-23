@@ -1,22 +1,31 @@
-Hello!
+Mr. Dashboard
 ====
 
-This is a demonstrator for [Sinatra](http://www.sinatrarb.com/) and [Twitter Bootstrap](http://twitter.github.com/bootstrap/). 
+A dashboard rotator that allows several sites to be rotated every X seconds.
 
-Use it as a boilerplate to start your own apps.
-
-Go!
+Setup
 ===
 
-Install dependencies:
+This integrates into Github authentication so you'll need to setup a test application https://github.com/account/applications
 
-	rvm 1.9.2
-	gem install sinatra
+    # sets up the github application integration
+    export GITHUB_KEY=#github client id
+    export GITHUB_TOKEN=#github secret
 
-Download and run sinatra-bootstrap:
+    # setup your own settings
+    cp config.yml.example config.yml
 
-	git clone git@github.com:pokle/sinatra-bootstrap.git
-	cd sinatra-bootstrap
-	ruby app.rb
-	
-Then open [http://localhost:4567/](http://localhost:4567/)
+    # automatically reload the application
+    bundle install
+    bundle exec shotgun -p 5000
+
+Then open [http://localhost:5000/](http://localhost:5000/)
+
+TODO
+=====
+
+* Move the pages/sites to be DB backed
+* Allow sites to be added / editing from the UI
+* Introduce the ability to show a single shot page
+* Add an API hook that allows single shot pages to be added
+

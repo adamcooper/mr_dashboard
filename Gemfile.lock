@@ -24,6 +24,7 @@ GEM
       rest-client (~> 1.6.1)
       rubyzip
       term-ansicolor (~> 1.0.5)
+    json (1.6.4)
     launchy (2.0.5)
       addressable (~> 2.2.6)
     mime-types (1.17.2)
@@ -42,6 +43,8 @@ GEM
       oauth2 (~> 0.5.0)
       omniauth (~> 1.0)
     rack (1.3.6)
+    rack-contrib (1.1.0)
+      rack (>= 0.9.1)
     rack-protection (1.2.0)
       rack
     rest-client (1.6.7)
@@ -70,8 +73,10 @@ DEPENDENCIES
   foreman
   haml
   heroku
+  json
   omniauth
   omniauth-github
+  rack-contrib
   rest-client
   sass
   shotgun

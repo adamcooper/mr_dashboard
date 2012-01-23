@@ -1,7 +1,7 @@
 !!! 5
 %html(lang="en")
   %head
-    %title Mr. Dashboard
+    %title= MrDashboard.settings['title']
     %script{:src => '/lib/jquery-1.7.min.js'}
     %script{:src => '/lib/bootstrap/js/bootstrap-dropdown.js'}
     %script{:src => '/lib/bootstrap/js/bootstrap-alerts.js'}
@@ -14,7 +14,7 @@
       .fill
         .container
           %h3
-            %a(href="#") Mr. Dashboard
+            %a(href="#")=MrDashboard.settings["title"]
           %ul(class="nav secondary-nav" data-dropdown="dropdown")
             %li.dropdown
               %a(href='#' class='dropdown-toggle')Commands
