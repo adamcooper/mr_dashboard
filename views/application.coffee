@@ -7,42 +7,87 @@ $ = jQuery
 class Queue
 
   constructor: () ->
+    @queue = []
+    @offset = 0
+
+  enqueue: (item) =>
+    @queue.push(item)
+
+  dequeue: () =>
+    return null if @queue.length == 0
+
+    item = @queue[@offset]
+
+    # free up space if need be
+    if ++@offset * 2 >= @queue.length
+      @queue = @queue.slice(@offset)
+      @offset = 0
+
+    return item
+
+  length: =>
+    @queue.length - @offset
+
+  peek: =>
+    @queue[@offset]
+
+class SiteList
+
+  constructor: () ->
     @items = []
     @counter = 0
 
   add: (item) ->
     @items.push(item)
 
-  current: ->
-    @items[@counter]
+  each: (fnct) ->
+   fnct(item) for item in @items
 
   next: ->
     @counter++
     @counter = 0 if @counter >= @items.length
     @items[@counter]
 
+# This manages the displaying of pages
+class DisplayList
+
+  constructor: () ->
+    @sites = new SiteList()
+    @pages = new Queue()
+
+  add_site: (item) ->
+    @sites.add(item)
+
+  add_page: (item) ->
+    @pages.enqueue(item)
+
+  fetch: ->
+    item = @pages.dequeue()
+    item = @sites.next() if item == null
+
 class Page
-
-  @settings:
-    rotation_speed: 15000;
-
-  @build: (url) =>
-    new Page(url, this.settings.rotation_speed)
 
   constructor: (@url, @duration) ->
 
-  element: () ->
-    if !@internal_element
+  # Appends the page's html to the container
+  #
+  # This will only append the html once
+  append_to: (container) =>
+    container.append(this.element())
+
+  show: =>
+    this.element().show()
+
+  hide: =>
+    this.element().hide()
+
+  # Returns the element
+  element: ()->
+    if !@internal_element?
       @internal_element = $("<iframe border='0' frameborder='0' framespacing='0' marginheight='0' marginwidth='0' name='frame' scrolling='yes'></iframe>").
         attr(src: @url, style: 'display: none')
 
     @internal_element
-
-  show: ->
-    @internal_element.show();
-
-  hide: ->
-    @internal_element.hide();
 
 
 # Rotator: handles the logic related to controlling the rotation
@@ -51,14 +96,20 @@ class Page
 # rotation.
 #
 class Rotator
-  constructor: (container, queue) ->
+  constructor: (container, sites, speed) ->
     @container = $(container)
-    @queue = queue
-    @paused = false
-    @container.append(page.element()) for page in @queue.items
-    @current_page = queue.current()
+    @current_speed = speed
+    @display_list = new DisplayList
 
-  pause: ->
+    for site in sites
+      @display_list.add_site(site)
+      site.append_to(@container)
+
+    @paused = false
+    @current_page = sites[0]
+    @current_page.show()
+
+  pause: =>
     @paused = true
 
   play: =>
@@ -70,7 +121,7 @@ class Rotator
   perform: () =>
     return if @paused
 
-    next_page = @queue.next()
+    next_page = @display_list.fetch()
 
     @current_page.hide()
     next_page.show()
@@ -78,15 +129,21 @@ class Rotator
 
     setTimeout(this.perform, next_page.duration) if next_page.duration > 0
 
-pages =['http://www.partnerpedia.com', 'https://marketplace.cisco.com'];
+  set_site_speed: (speed) =>
+    @current_speed = speed
+    @display_list.sites.each (site) ->
+      site.duration = speed
+
+
 
 $ ->
   $.getJSON '/settings.js', (data)->
 
     # setting up rotator and pages
-    queue = new Queue()
-    queue.add(Page.build(url)) for url in data['sites']
-    rotator = new Rotator($('#frame_container'), queue)
+    sites = (new Page(url, data['speed']) for url in data['sites'] )
+    root.sites = sites
+    root.display = DisplayList
+    rotator = new Rotator($('#frame_container'), sites, data['speed'])
     rotator.perform()
 
 
@@ -105,11 +162,9 @@ $ ->
       rotator.pause()
 
     $('#speed').click ->
-      speed = parseInt(prompt('Please enter the new speed in secods:')) * 1000
-      if speed
-        page.duration = speed for page in queue.items
+      speed = parseInt(prompt("The current speed is #{rotator.current_speed / 1000} seconds.\n\nPlease enter the new speed in secods:")) * 1000
+      rotator.set_site_speed(speed) if speed?
 
     # debugging exports
     root.page = Page
     root.rotator = rotator
-    root.queue = queue

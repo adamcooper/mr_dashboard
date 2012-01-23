@@ -3,12 +3,14 @@ module MrDashboard
   def self.settings
     @settings ||=  begin
                      defaults = {
+                       'speed' => ENV['SPEED'] || 15000,
                        'title' => ENV['TITLE'] || 'Mr. Dashboard',
                        'github_org' => ENV['GITHUB_ORG'] || nil,
                        'sites' => ENV['SITES'] || ['http://www.sinatrarb.com', 'http://news.ycombinator.com']
                      }
                      config_file = Pathname.new(File.dirname(__FILE__) + "/config.yml")
                      defaults.merge(YAML.load_file(config_file.to_s)) if config_file.exist?
+                     defaults['sites'] = defaults['sites'].split(',') unless defaults['sites'].is_a?(Array)
 
                      defaults
                    end
@@ -43,7 +45,7 @@ module MrDashboard
 
     get '/settings.js' do
       content_type :json
-      { sites: MrDashboard.settings['sites'] }.to_json
+      { sites: MrDashboard.settings['sites'], speed: MrDashboard.settings['speed'] }.to_json
     end
 
     get '/login' do
