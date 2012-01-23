@@ -1,12 +1,16 @@
 source :rubygems
 
+gem 'coffee-script'
 gem 'foreman'
-gem 'heroku'
+gem 'haml'
 gem 'omniauth'
 gem 'omniauth-github'
+gem 'rest-client'
 gem 'sinatra'
-gem 'haml'
 gem 'sass'
-gem 'coffee-script'
 gem 'thin'
-gem 'shotgun'
+
+group :development do
+  gem 'heroku'
+  gem 'shotgun'
+end
