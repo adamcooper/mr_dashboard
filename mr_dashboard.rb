@@ -33,6 +33,10 @@ module MrDashboard
     end
   end
 
+  def self.display
+    { sites: [], pages: [] }
+  end
+
   class App < Sinatra::Base
 
     set :public_folder, Proc.new { File.join(root, "public") }
@@ -46,6 +50,20 @@ module MrDashboard
     get '/settings.js' do
       content_type :json
       { sites: MrDashboard.settings['sites'], speed: MrDashboard.settings['speed'] }.to_json
+    end
+
+    get '/add' do
+      MrDashboard.display[:pages] << params['page']
+      MrDashboard.display[:sites] << params['site']
+      :ok
+    end
+
+    get '/display.js' do
+      content_type :json
+      response = MrDashboard.display.to_json
+      MrDashboard.display[:sites] = []
+      MrDashboard.display[:pages] = []
+      response
     end
 
     get '/login' do

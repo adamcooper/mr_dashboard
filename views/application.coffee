@@ -57,6 +57,7 @@ class DisplayList
 
   add_site: (item) ->
     @sites.add(item)
+    $('body').trigger('display_list.site_added', item)
 
   add_page: (item) ->
     @pages.enqueue(item)
@@ -64,6 +65,12 @@ class DisplayList
   fetch: ->
     item = @pages.dequeue()
     item = @sites.next() if item == null
+
+  poll: =>
+    $.getJSON '/display.js', (data) ->
+      @pages.enqueue(page) for page in data['pages']
+      @sites.add(site) for site in data['site']
+      setTimeout(this.poll, 1000)
 
 class Page
 
@@ -111,12 +118,14 @@ class Rotator
 
   pause: =>
     @paused = true
+    $('body').trigger('rotator.paused')
 
   play: =>
     return unless @paused
 
     @paused = false
     this.perform()
+    $('body').trigger('rotator.play')
 
   perform: () =>
     return if @paused
@@ -127,17 +136,38 @@ class Rotator
     next_page.show()
     @current_page = next_page
 
-    setTimeout(this.perform, next_page.duration) if next_page.duration > 0
+    @next_timeout = setTimeout(this.perform, next_page.duration) if next_page.duration > 0
 
   set_site_speed: (speed) =>
     @current_speed = speed
     @display_list.sites.each (site) ->
       site.duration = speed
 
+  next: =>
+    clearTimeout(@next_timeout) if @next_timeout?
+    this.perform()
+
+
+  set_page:(page) =>
+    this.pause()
+
+    @current_page.hide()
+    page.show()
+    @current_page = page
+
+
 
 
 $ ->
   $.getJSON '/settings.js', (data)->
+
+    sites_ul = $('ul.sites_ul')
+    $('body').bind 'display_list.site_added', (object, page) ->
+      el = $("<li><a href='#'>#{page.url}</a></li>")
+      sites_ul.prepend(el)
+      el.click ->
+        rotator.set_page(page)
+
 
     # setting up rotator and pages
     sites = (new Page(url, data['speed']) for url in data['sites'] )
@@ -146,24 +176,30 @@ $ ->
     rotator = new Rotator($('#frame_container'), sites, data['speed'])
     rotator.perform()
 
-
     # bind handlers
     play_btn = $('#play')
     pause_btn = $('#pause')
 
     play_btn.click ->
-      pause_btn.show()
-      play_btn.hide()
       rotator.play()
 
     pause_btn.click ->
-      pause_btn.hide()
-      play_btn.show()
       rotator.pause()
 
+    $('body').bind 'rotator.paused', ->
+      pause_btn.hide()
+      play_btn.show()
+
+    $('body').bind 'rotator.play', ->
+      pause_btn.show()
+      play_btn.hide()
+
     $('#speed').click ->
-      speed = parseInt(prompt("The current speed is #{rotator.current_speed / 1000} seconds.\n\nPlease enter the new speed in secods:")) * 1000
+      speed = parseInt(prompt("The current speed is #{rotator.current_speed / 1000} seconds.\n\nPlease enter the new speed in seconds:")) * 1000
       rotator.set_site_speed(speed) if speed?
+
+    $('#next').click ->
+      rotator.next()
 
     # debugging exports
     root.page = Page

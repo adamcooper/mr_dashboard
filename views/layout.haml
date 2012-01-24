@@ -16,17 +16,20 @@
           %h3
             %a(href="#")=MrDashboard.settings["title"]
           %ul(class="nav secondary-nav" data-dropdown="dropdown")
-            %li.dropdown
-              %a(href='#' class='dropdown-toggle')Commands
-              %ul.dropdown-menu
-                %li
-                  %a(href="#" id = 'speed') Set Speed
-                %li
-                  %a(href = "#" id = 'pause') Pause
-                %li
-                  %a(href = "#" id = 'play' style = 'display: none;') Play
             %li
-              %a(href = "/logout") Logout
+              %a(href="#" id = 'speed') Speed
+            %li
+              %a(href = "#" id = 'pause') Pause
+            %li
+              %a(href = "#" id = 'play' style = 'display: none;') Play
+            %li
+              %a(href="#" id = 'next') Next
+            %li.dropdown
+              %a(href='#' class='dropdown-toggle')Sites
+              %ul.dropdown-menu.sites_ul
+                %li.divider
+                %li
+                  %a(href = "/logout") Logout
 
     .container-fluid
       = yield
